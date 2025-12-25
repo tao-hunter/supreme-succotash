@@ -123,11 +123,10 @@ class GenerationPipeline:
         # Decode input image
         image = decode_image(request.prompt_image)
 
-        # 1. Edit the image using Qwen Edit (using the same image as both reference and prompt)
-        image_edited = self.qwen_edit.edit_image(prompt_image=image, reference_image=image, seed=request.seed)
-
-        # 2. Remove background
+        image_without_background = self.rmbg.remove_background(image)
+        image_edited = self.qwen_edit.edit_image(prompt_image=image, reference_image=image_without_background, seed=request.seed)
         image_without_background = self.rmbg.remove_background(image_edited)
+
 
         trellis_result: Optional[TrellisResult] = None
         
